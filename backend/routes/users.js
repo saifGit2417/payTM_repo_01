@@ -1,11 +1,13 @@
 import express from "express";
+import jsonwebtoken from "jsonwebtoken";
 import { User } from "../db/index.js";
 import {
   validateSignInDetails,
   validateSignUpDetails,
+  validateUpdateUser,
 } from "../middlewares/user_middleware.js";
-import jsonwebtoken from "jsonwebtoken";
 import { JWT_SECRET } from "../config.js";
+import { authMiddleware } from "../middlewares/auth_middleware.js";
 const userRouter = express.Router();
 
 userRouter.post("/signup", validateSignUpDetails, async (req, res) => {
@@ -53,6 +55,18 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
     res
       .status(500)
       .json({ message: "something went wrong", error: error.message });
+  }
+});
+
+userRouter.put("/updateDetails", validateUpdateUser, authMiddleware, async (req, res) => {
+  try {
+    const { firstName, lastName, password } = req.body;
+    console.log('req.userId: ', req.userId);
+    await User.updateOne(firstName, lastName, password, { _id: req.userId });
+    res.json({ message: "user details updated successfully" });
+  } catch (error) {
+    console.log(error)
+    res.json({ error: error.message });
   }
 });
 

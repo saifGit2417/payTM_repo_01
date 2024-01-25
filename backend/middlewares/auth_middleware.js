@@ -8,13 +8,15 @@ export async function authMiddleware(req, res, next) {
     let jwtToken = authorization.split(" ")[1];
     const verifyJwt = jsonwebtoken.verify(jwtToken, JWT_SECRET);
     const { userId } = verifyJwt;
+    console.log('userId: ', userId);
 
     const verifyUser = await User.findById(userId);
     if (verifyUser) {
+      req.userId = userId;
       next();
     } else {
       res.status(403).json({
-        message:"user is not authenticated to access this"
+        message: "user is not authenticated to access this",
       });
     }
   } catch (error) {

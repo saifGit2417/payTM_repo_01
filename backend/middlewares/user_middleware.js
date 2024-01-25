@@ -12,6 +12,12 @@ const userSignIn = z.object({
   password: z.string().min(6),
 });
 
+const updateUserDetails = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  password: z.string().optional(),
+});
+
 const validateUserDetails = (schema) => (req, res, next) => {
   const checkReqBody = schema.safeParse(req.body);
   try {
@@ -19,9 +25,11 @@ const validateUserDetails = (schema) => (req, res, next) => {
       next();
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 };
 
 export const validateSignUpDetails = validateUserDetails(userSignUp);
 export const validateSignInDetails = validateUserDetails(userSignIn);
+export const validateUpdateUser = validateUserDetails(updateUserDetails);
