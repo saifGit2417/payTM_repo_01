@@ -58,7 +58,7 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
   }
 });
 
-userRouter.put("/updateDetails", authMiddleware, async (req, res) => {
+userRouter.put("/updateExistingDetails", authMiddleware, async (req, res) => {
   try {
     const { firstName, lastName, password } = req.body;
     await User.updateOne(
@@ -70,6 +70,34 @@ userRouter.put("/updateDetails", authMiddleware, async (req, res) => {
     console.log(error);
     res.json({ error: error.message });
   }
+});
+
+userRouter.get("/user/bulk", async (req, res) => {
+  const filter = req.query.filter || "";
+
+  const users = await User.find({
+    $or: [
+      {
+        firstName: {
+          $regex: filter,
+        },
+      },
+      {
+        lastName: {
+          $regex: filter,
+        },
+      },
+    ],
+  });
+
+  res.json({
+    user: users.map((user) => ({
+      userName: user.userName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      _id: user._id,
+    })),
+  });
 });
 
 export default userRouter;
