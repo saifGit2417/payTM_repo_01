@@ -1,15 +1,13 @@
 import jsonwebtoken from "jsonwebtoken";
-import { JWT_SECRET } from "../config.js";
+import { JWT_SECRET_KEY } from "../config.js";
 import { User } from "../db/index.js";
 export async function authMiddleware(req, res, next) {
   const { authorization } = req.headers;
 
   try {
     let jwtToken = authorization.split(" ")[1];
-    const verifyJwt = jsonwebtoken.verify(jwtToken, JWT_SECRET);
+    const verifyJwt = jsonwebtoken.verify(jwtToken, JWT_SECRET_KEY);
     const { userId } = verifyJwt;
-    console.log('userId: ', userId);
-
     const verifyUser = await User.findById(userId);
     if (verifyUser) {
       req.userId = userId;

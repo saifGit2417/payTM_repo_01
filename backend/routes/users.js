@@ -6,7 +6,7 @@ import {
   validateSignUpDetails,
   validateUpdateUser,
 } from "../middlewares/user_middleware.js";
-import { JWT_SECRET } from "../config.js";
+import { JWT_SECRET_KEY } from "../config.js";
 import { authMiddleware } from "../middlewares/auth_middleware.js";
 const userRouter = express.Router();
 
@@ -24,7 +24,7 @@ userRouter.post("/signup", validateSignUpDetails, async (req, res) => {
         password,
       });
       const userId = createUser._id;
-      let createJwtToken = jsonwebtoken.sign({ userId }, JWT_SECRET);
+      let createJwtToken = jsonwebtoken.sign({ userId }, JWT_SECRET_KEY);
       res.json({
         message: "new user created Successfully",
         token: createJwtToken,
@@ -45,7 +45,7 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
     if (findUser.length <= 0) {
       res.json({ message: "no user found with username", userName });
     } else {
-      let createJwt = jsonwebtoken.sign({ userId }, JWT_SECRET);
+      let createJwt = jsonwebtoken.sign({ userId }, JWT_SECRET_KEY);
       res.json({
         message: "logged in successfully",
         jwt: createJwt,
@@ -58,14 +58,16 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
   }
 });
 
-userRouter.put("/updateDetails", validateUpdateUser, authMiddleware, async (req, res) => {
+userRouter.put("/updateDetails", authMiddleware, async (req, res) => {
   try {
     const { firstName, lastName, password } = req.body;
-    console.log('req.userId: ', req.userId);
-    await User.updateOne(firstName, lastName, password, { _id: req.userId });
+    await User.updateOne(
+      { firstName, lastName, password },
+      { _id: req.userId }
+    );
     res.json({ message: "user details updated successfully" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.json({ error: error.message });
   }
 });
