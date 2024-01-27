@@ -108,8 +108,9 @@ userRouter.get("/user/bulk", async (req, res) => {
 });
 
 userRouter.delete("/deleteAllRecords", async (req, res) => {
-  await User.deleteMany();
-  res.json({message:"All records had been deleted successfully"})
+  await User.deleteMany({});
+  await AccountDetails.deleteMany({});
+  res.json({ message: "All records had been deleted successfully" });
 });
 
 export default userRouter;
