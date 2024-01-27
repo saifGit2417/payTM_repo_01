@@ -1,6 +1,6 @@
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
-import { User } from "../db/index.js";
+import { AccountDetails, User } from "../db/index.js";
 import {
   validateSignInDetails,
   validateSignUpDetails,
@@ -24,6 +24,13 @@ userRouter.post("/signup", validateSignUpDetails, async (req, res) => {
         password,
       });
       const userId = createUser._id;
+      const generateRandomBankBalance = Math.floor(Math.random() * 10000);
+
+      // this will update the account details adn add random balance between 0 to 10000 of user when user is created
+      await AccountDetails.create({
+        userId,
+        balance: generateRandomBankBalance,
+      });
       let createJwtToken = jsonwebtoken.sign({ userId }, JWT_SECRET_KEY);
       res.json({
         message: "new user created Successfully",
@@ -73,8 +80,8 @@ userRouter.put("/updateExistingDetails", authMiddleware, async (req, res) => {
 });
 
 userRouter.get("/user/bulk", async (req, res) => {
+  // this i need to grind more to understand how search query works in mongo db
   const filter = req.query.filter || "";
-
   const users = await User.find({
     $or: [
       {
@@ -98,6 +105,11 @@ userRouter.get("/user/bulk", async (req, res) => {
       _id: user._id,
     })),
   });
+});
+
+userRouter.delete("/deleteAllRecords", async (req, res) => {
+  await User.deleteMany();
+  res.json({message:"All records had been deleted successfully"})
 });
 
 export default userRouter;

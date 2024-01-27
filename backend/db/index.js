@@ -1,9 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { DB_URL } from "../config.js";
 
-mongoose
-  .connect(DB_URL)
-  .then(() => console.log("db connected successfully"));
+mongoose.connect(DB_URL).then(() => console.log("db connected successfully"));
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -20,6 +18,12 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model("Users", userSchema);
+const bankDetailsSchema = new mongoose.Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  balance: { type: Number, required: true },
+});
 
-export {User}
+const User = mongoose.model("Users", userSchema);
+const AccountDetails = mongoose.model("AccountDetails", bankDetailsSchema);
+
+export { User, AccountDetails };
