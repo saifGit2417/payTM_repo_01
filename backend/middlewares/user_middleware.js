@@ -21,11 +21,13 @@ const updateUserDetails = z.object({
 const validateUserDetails = (schema) => (req, res, next) => {
   const checkReqBody = schema.safeParse(req.body);
   try {
-    if (checkReqBody.success) {
+    if (checkReqBody.success !== false) {
       next();
+    } else {
+      res.status(400).json({ message: "schema validation failed" });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
