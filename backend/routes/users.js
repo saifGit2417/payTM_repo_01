@@ -1,5 +1,6 @@
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import { AccountDetails, User } from "../db/index.js";
 import {
   validateSignInDetails,
