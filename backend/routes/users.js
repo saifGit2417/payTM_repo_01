@@ -20,6 +20,9 @@ const saltRounds = 10;
       values > which is going to be saved in db
 
   ->when password are stored by hashing we have to search user based on username/email only which are unique
+
+  -> to create hash > await bcrypt.hash -> this can be done asynchronously using hashSync
+  -> same goes for compare -> can use compareSync
 */
 //=========================================Pointers=========================================*//
 
@@ -30,7 +33,8 @@ userRouter.post("/signup", validateSignUpDetails, async (req, res) => {
     if (userNameExist.length > 0) {
       res.status(411).json({ message: "username/email is already taken " });
     } else {
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      // const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
       let createUser = await User.create({
         userName,
@@ -70,7 +74,7 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
         message: `No user found with username userName ${userName}`,
       });
     } else {
-      const passwordMatch = await bcrypt.compare(password, storedPassword);
+      const passwordMatch = bcrypt.compareSync(password, storedPassword);
       if (!passwordMatch) {
         return res.status(400).json({ message: "password is incorrect" });
       }
