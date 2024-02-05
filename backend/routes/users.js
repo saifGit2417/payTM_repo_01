@@ -91,27 +91,35 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
   }
 });
 
-userRouter.put("/updateExistingDetails", authMiddleware, async (req, res) => {
-  try {
-    const { firstName, lastName, password } = req.body;
-    let hashedPassword;
-    if (password) {
-      hashedPassword = bcrypt.hashSync(password, saltRounds);
+userRouter.put(
+  "/updateExistingDetails",
+  validateUpdateUser,
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { firstName, lastName, password } = req.body;
+      let hashedPassword;
+      if (password) {
+        hashedPassword = bcrypt.hashSync(password, saltRounds);
+      }
+      const filterCriteria = { _id: req.userId };
+      const updatedFields = { firstName, lastName };
+      if (hashedPassword) {
+        updatedFields.password = hashedPassword;
+      }
+      await User.updateOne(filterCriteria, { $set: updatedFields });
+      res.json({ message: "user details updated successfully" });
+    } catch (error) {
+      console.log(error);
+      res.json({ error: error.message });
     }
-    const filterCriteria = { _id: req.userId };
-    const updatedFields = { firstName, lastName };
-    if (hashedPassword) {
-      updatedFields.password = hashedPassword;
-    }
-    await User.updateOne(filterCriteria, { $set: updatedFields });
-    res.json({ message: "user details updated successfully" });
-  } catch (error) {
-    console.log(error);
-    res.json({ error: error.message });
   }
-});
+);
 
 userRouter.get("/user/bulk", async (req, res) => {
+  /*
+  localhost:8007/api/v1/user/user/bulk?filter=saif >> api url
+  */
   // this i need to grind more to understand how search query works in mongo db
   const filter = req.query.filter || "";
   const users = await User.find({
