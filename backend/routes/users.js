@@ -94,10 +94,16 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
 userRouter.put("/updateExistingDetails", authMiddleware, async (req, res) => {
   try {
     const { firstName, lastName, password } = req.body;
-    await User.updateOne(
-      { firstName, lastName, password },
-      { _id: req.userId }
-    );
+    let hashedPassword;
+    if (password) {
+      hashedPassword = bcrypt.hashSync(password, saltRounds);
+    }
+    const filterCriteria = { _id: req.userId };
+    const updatedFields = { firstName, lastName };
+    if (hashedPassword) {
+      updatedFields.password = hashedPassword;
+    }
+    await User.updateOne(filterCriteria, { $set: updatedFields });
     res.json({ message: "user details updated successfully" });
   } catch (error) {
     console.log(error);

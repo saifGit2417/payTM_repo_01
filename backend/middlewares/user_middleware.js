@@ -2,8 +2,8 @@ import { z } from "zod";
 
 const userSignUp = z.object({
   userName: z.string().email(),
-  lastName: z.string(),
   firstName: z.string(),
+  lastName: z.string(),
   password: z.string().min(6),
 });
 
