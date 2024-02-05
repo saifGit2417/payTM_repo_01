@@ -1,11 +1,12 @@
+import React from "react";
+import Debounce from "./components/Debounce";
 
-function App() {
-
+const App = () => {
   return (
     <div>
-        Hello world
+      <Debounce />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
