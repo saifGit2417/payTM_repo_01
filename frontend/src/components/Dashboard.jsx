@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 import Send from "./Send";
 import styles from "../styles/Dashboard.module.css";
 import { getAuthToken } from "../constants/helpers";
+import { useSetRecoilState } from "recoil";
+import { AuthTokenAtom } from "../atoms/atoms";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const setAuthToken = useSetRecoilState(AuthTokenAtom);
   const [searchVal, setSearchVal] = useState("");
   const [allUserDetails, setAlUserDetails] = useState([]);
   const [openModal, setOpenModal] = useState({
@@ -58,8 +61,9 @@ const Dashboard = () => {
     setOpenModal((prev) => ({ ...prev, open: true, modalData: {} }));
   };
   const handleLogout = () => {
-    navigate("/signin");
     localStorage.clear();
+    navigate("/signin");
+    setAuthToken(null);
   };
   return (
     <div>
@@ -67,6 +71,12 @@ const Dashboard = () => {
         <button className={styles.logoutButton} onClick={handleLogout}>
           Logout
         </button>
+        <div>
+          {" "}
+          <button className={styles.logoutButton} onClick={handleLogout}>
+            Update Profile
+          </button>
+        </div>
       </div>
       <div>
         <h1>Payments App</h1>

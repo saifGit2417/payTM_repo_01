@@ -3,9 +3,12 @@ import styles from "../styles/signin.module.css";
 import { useNavigate } from "react-router-dom";
 import { Snackbar, Alert } from "@mui/material";
 import axios from "axios";
+import { useSetRecoilState } from "recoil";
+import { AuthTokenAtom } from "../atoms/atoms";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const setAuthToken = useSetRecoilState(AuthTokenAtom);
 
   const [formData, setFormData] = useState({
     userName: "",
@@ -39,6 +42,7 @@ const SignIn = () => {
         if (res.status === 200 || res.status === 201) {
           const authToken = res.data.token;
           localStorage.setItem("auth_token", authToken);
+          setAuthToken(authToken);
           navigate("/dashboard");
           setSnackbar({
             open: true,
@@ -46,6 +50,7 @@ const SignIn = () => {
             severity: "success",
           });
         } else {
+          navigate("/signin");
           setSnackbar({
             open: true,
             message: "something went wrong",

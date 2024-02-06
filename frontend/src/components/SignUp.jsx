@@ -4,9 +4,13 @@ import { Snackbar, Alert } from "@mui/material";
 import styles from "../styles/signup.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useSetRecoilState } from "recoil";
+import { AuthTokenAtom } from "../atoms/atoms";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const setAuthToken = useSetRecoilState(AuthTokenAtom);
+
   const [formData, setFormData] = useState({
     userName: "",
     firstName: "",
@@ -36,6 +40,7 @@ const Signup = () => {
         if (res.status === 200 || res.status === 201) {
           const authToken = res.data.token;
           localStorage.setItem("auth_token", authToken);
+          setAuthToken(authToken);
           navigate("/dashboard");
           setSnackbar({
             open: true,
