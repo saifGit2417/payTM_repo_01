@@ -10,7 +10,7 @@ const SendModal = ({ open, handleClose, modalData }) => {
     const toSend = modalData?._id;
     const bodyData = { to: toSend, amount: parseInt(amountToSent) };
     console.log("toSend: ", toSend);
-    axios.post("http://paytm100x.vercel.app/api/v1/account/transfer", bodyData, {
+    axios.post("https://paytm100x.vercel.app/api/v1/account/transfer", bodyData, {
       headers: {
         Authorization: `Bearer ${getAuthToken}`,
       },
