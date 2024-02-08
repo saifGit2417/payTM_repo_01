@@ -21,7 +21,7 @@ const Dashboard = () => {
   const loggedInUserId = decodeToken?.userId;
 
   const fetchUserDetails = (filterVal = "") => {
-    let apiUrl = `http://localhost:8007/api/v1/user/user/bulk`;
+    let apiUrl = `http://paytm100x.vercel.app/api/v1/user/user/bulk`;
     if (filterVal) {
       apiUrl += `?filter=${filterVal}`;
     }
