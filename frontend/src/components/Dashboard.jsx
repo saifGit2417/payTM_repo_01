@@ -7,17 +7,18 @@ import styles from "../styles/Dashboard.module.css";
 import { getAuthToken } from "../constants/helpers";
 import { useSetRecoilState } from "recoil";
 import { AuthTokenAtom } from "../atoms/atoms";
+import UpdateModal from "./UpdateModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const setAuthToken = useSetRecoilState(AuthTokenAtom);
   const [searchVal, setSearchVal] = useState("");
   const [allUserDetails, setAlUserDetails] = useState([]);
+  const [loginUserName, setLoginUserName] = useState("");
   const [userBalance, setUserBalance] = useState(0);
-  const [openModal, setOpenModal] = useState({
-    open: false,
-    modalData: {},
-  });
+  const [openModal, setOpenModal] = useState(false);
+  const [modalData, setModalData] = useState({});
+  const [updateModal, setUpdateModal] = useState(false);
   const decodeToken = jwtDecode(getAuthToken);
   const loggedInUserId = decodeToken?.userId;
 
@@ -34,9 +35,16 @@ const Dashboard = () => {
         if (res.status === 200 || res.status === 201) {
           // logged in user should not be in the list of users to whom money can be sent
           let listOfAllUsers = res?.data?.user;
+
           let filterOutList =
             listOfAllUsers &&
             listOfAllUsers?.filter((data) => data._id !== loggedInUserId);
+
+          let loggedInUserData =
+            listOfAllUsers &&
+            listOfAllUsers?.filter((data) => data._id === loggedInUserId);
+
+          setLoginUserName(loggedInUserData[0]);
           setAlUserDetails(filterOutList);
         }
       })
@@ -70,32 +78,46 @@ const Dashboard = () => {
     } else {
       fetchUserDetails(searchVal);
     }
-  }, [searchVal]);
+  }, [searchVal, updateModal]);
+
   useEffect(() => {
     fetchUserBalance();
   }, [openModal]);
 
   const handleOpenModal = (data) => {
-    setOpenModal((prev) => ({ ...prev, open: true, modalData: data }));
+    setOpenModal(true);
+    setModalData(data);
   };
 
   const handleCloseModal = () => {
-    setOpenModal((prev) => ({ ...prev, open: true, modalData: {} }));
+    setOpenModal(false);
+    setModalData({});
+    setUpdateModal(false);
   };
   const handleLogout = () => {
     localStorage.clear();
     navigate("/signin");
     setAuthToken(null);
   };
+
+  const handleOpenUpdateModal = () => {
+    setUpdateModal(true);
+  };
   return (
     <div>
-      <div>
-        <button className={styles.logoutButton} onClick={handleLogout}>
+      <div className={styles.actionBtns}>
+        <button
+          className={`${styles.logoutButton} ${styles.logout}`}
+          onClick={handleLogout}
+        >
           Logout
         </button>
         <div>
           {" "}
-          <button className={styles.logoutButton} onClick={handleLogout}>
+          <button
+            className={`${styles.logoutButton} ${styles.update}`}
+            onClick={handleOpenUpdateModal}
+          >
             Update Profile
           </button>
         </div>
@@ -103,7 +125,11 @@ const Dashboard = () => {
       <div>
         <h1>Payments App</h1>
         <div>
-          <p>Hello User</p>
+          <p>
+            Hello{" "}
+            {loginUserName &&
+              loginUserName?.firstName + " " + loginUserName?.lastName}{" "}
+          </p>
         </div>
       </div>
       <div>
@@ -121,9 +147,9 @@ const Dashboard = () => {
         <table className={styles.userTable}>
           <thead>
             <tr>
-              <th>First Name</th>
+              <th>Initials</th>
               <th>User Name</th>
-              <th>Initial</th>
+              <th>Email</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -152,10 +178,18 @@ const Dashboard = () => {
       </div>
       {openModal && (
         <Send
-          open={openModal.open}
-          handleClose={handleCloseModal}
-          modalData={openModal.modalData}
-          setOpenModal={setOpenModal}
+          open={openModal}
+          setOpen={setOpenModal}
+          modalData={modalData}
+          setModalData={setModalData}
+          onClose={handleCloseModal}
+        />
+      )}
+      {updateModal && (
+        <UpdateModal
+          open={updateModal}
+          setOpen={setUpdateModal}
+          onClose={handleCloseModal}
         />
       )}
     </div>

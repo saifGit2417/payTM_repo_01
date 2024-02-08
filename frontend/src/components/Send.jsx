@@ -3,11 +3,9 @@ import styles from "../styles/Send.module.css";
 import axios from "axios";
 import { getAuthToken } from "../constants/helpers";
 
-const SendModal = ({ open, handleClose, modalData }) => {
+const SendModal = ({ open, setOpen, modalData, setModalData, onClose }) => {
   const [amountToSent, setAmountToSent] = useState();
-  const onClose = () => {
-    handleClose();
-  };
+  
   const handleMoneyTransfer = () => {
     const toSend = modalData?._id;
     const bodyData = { to: toSend, amount: parseInt(amountToSent) };
@@ -19,8 +17,8 @@ const SendModal = ({ open, handleClose, modalData }) => {
       })
       .then((res) => {
         if (res.status === 200 || res.status === 201) {
-          setOpenModal({ open: false, modalData: {} });
-          onClose();
+          setOpen(false);
+          setModalData({});
         }
       })
       .catch((err) => {

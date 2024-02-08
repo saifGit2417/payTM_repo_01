@@ -3,6 +3,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  padding: 100px;
 }
 
 th,
@@ -45,11 +46,13 @@ th {
   background-color: #45a049;
 }
 /* LogoutButton.module.css */
-
-.logoutButton {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+.actionBtns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+/* CSS for the Logout button */
+.logoutButton.logout {
   padding: 10px 15px;
   background-color: #ff0000; /* Change the color as needed */
   color: #fff;
@@ -58,6 +61,20 @@ th {
   cursor: pointer;
 }
 
-.logoutButton:hover {
+.logoutButton.logout:hover {
   background-color: #cc0000; /* Change the hover color as needed */
+}
+
+/* CSS for the Update Profile button */
+.logoutButton.update {
+  padding: 10px 15px;
+  background-color: #007bff; /* Change the color as needed */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logoutButton.update:hover {
+  background-color: #0056b3; /* Change the hover color as needed */
 }
