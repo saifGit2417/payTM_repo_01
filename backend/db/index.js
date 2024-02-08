@@ -1,12 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { DB_URL } from "../config.js";
 
-mongoose
-  .connect(
-    `mongodb+srv://saif100x:5PVhSqYJ9G9nU3Nb@100xcluster.gdbofct.mongodb.net/` ||
-      DB_URL
-  )
-  .then(() => console.log("db connected successfully"));
+mongoose.connect(DB_URL).then(() => console.log("db connected successfully"));
 
 const userSchema = new mongoose.Schema({
   userName: {
