@@ -81,7 +81,7 @@ userRouter.post("/signIn", validateSignInDetails, async (req, res) => {
       let createJwt = jsonwebtoken.sign({ userId }, JWT_SECRET_KEY);
       return res.json({
         message: "logged in successfully",
-        jwt: createJwt,
+        token: createJwt,
       });
     }
   } catch (error) {
