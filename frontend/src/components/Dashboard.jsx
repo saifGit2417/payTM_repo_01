@@ -41,6 +41,7 @@ const Dashboard = () => {
       })
       .catch((err) => console.log(err));
   };
+  console.log("dashboard mounted")
 
   useEffect(() => {
     if (searchVal) {

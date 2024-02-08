@@ -17,7 +17,14 @@ const App = () => {
     <div>
       <Suspense fallback={<p>.........loading</p>}>
         <Routes>
-          {authTokenAtom !== null ? (
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/send" element={<Send />} />
+
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+
+          {/* {authTokenAtom !== null ? (
             <>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/send" element={<Send />} />
@@ -28,7 +35,7 @@ const App = () => {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
             </>
-          )}
+          )} */}
         </Routes>
       </Suspense>
     </div>
