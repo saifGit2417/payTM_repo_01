@@ -34,7 +34,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://paytm100x.vercel.app/api/v1/user/signup", formData)
+      .post("https://paytm100x.vercel.app/api/v1/user/signup", formData)
       .then((res) => {
         console.log("res: ", res);
         if (res.status === 200 || res.status === 201) {
