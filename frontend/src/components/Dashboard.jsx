@@ -13,6 +13,7 @@ const Dashboard = () => {
   const setAuthToken = useSetRecoilState(AuthTokenAtom);
   const [searchVal, setSearchVal] = useState("");
   const [allUserDetails, setAlUserDetails] = useState([]);
+  const [userBalance, setUserBalance] = useState(0);
   const [openModal, setOpenModal] = useState({
     open: false,
     modalData: {},
@@ -42,16 +43,37 @@ const Dashboard = () => {
       .catch((err) => console.log(err));
   };
 
+  const fetchUserBalance = () => {
+    try {
+      axios
+        .get("https://paytm100x.vercel.app/api/v1/account/balance", {
+          headers: {
+            Authorization: `Bearer ${getAuthToken}`,
+          },
+        })
+        .then((res) => {
+          const userBalance = res.data.balance;
+          setUserBalance(userBalance);
+        })
+        .catch((error) => console.log(error));
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
   useEffect(() => {
     if (searchVal) {
       let timerApi = setTimeout(() => {
         fetchUserDetails(searchVal);
-      }, 2000);
+      }, 1000);
       return () => clearTimeout(timerApi);
     } else {
       fetchUserDetails(searchVal);
     }
   }, [searchVal]);
+  useEffect(() => {
+    fetchUserBalance();
+  }, [openModal]);
 
   const handleOpenModal = (data) => {
     setOpenModal((prev) => ({ ...prev, open: true, modalData: data }));
@@ -85,7 +107,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div>
-        <h1>Your Balance</h1>
+        <h1>Your Balance {userBalance} </h1>
       </div>
       <div>
         <h1>Users</h1>
@@ -133,6 +155,7 @@ const Dashboard = () => {
           open={openModal.open}
           handleClose={handleCloseModal}
           modalData={openModal.modalData}
+          setOpenModal={setOpenModal}
         />
       )}
     </div>

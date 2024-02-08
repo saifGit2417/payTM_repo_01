@@ -5,21 +5,34 @@ import { getAuthToken } from "../constants/helpers";
 
 const SendModal = ({ open, handleClose, modalData }) => {
   const [amountToSent, setAmountToSent] = useState();
-
+  const onClose = () => {
+    handleClose();
+  };
   const handleMoneyTransfer = () => {
     const toSend = modalData?._id;
     const bodyData = { to: toSend, amount: parseInt(amountToSent) };
-    console.log("toSend: ", toSend);
-    axios.post("https://paytm100x.vercel.app/api/v1/account/transfer", bodyData, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken}`,
-      },
-    });
+    axios
+      .post("https://paytm100x.vercel.app/api/v1/account/transfer", bodyData, {
+        headers: {
+          Authorization: `Bearer ${getAuthToken}`,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200 || res.status === 201) {
+          setOpenModal({ open: false, modalData: {} });
+          onClose();
+        }
+      })
+      .catch((err) => {
+        onClose();
+        console.log("err: ", err);
+      });
   };
+
   return (
     <div>
       {open && (
-        <div className={styles.modalBackdrop} onClick={handleClose}>
+        <div className={styles.modalBackdrop} onClick={onClose}>
           <div
             className={styles.modalContainer}
             onClick={(e) => e.stopPropagation()}
@@ -29,7 +42,7 @@ const SendModal = ({ open, handleClose, modalData }) => {
               <div>
                 <div className={styles.friendName}>
                   <div className={styles.initialIcon}>
-                    {modalData?.firstName.slice(0, 1)}
+                    {modalData?.firstName?.slice(0, 1)}
                   </div>
                   <p>Friends Name</p>
                 </div>
