@@ -118,7 +118,7 @@ userRouter.put(
 
 userRouter.get("/user/bulk", async (req, res) => {
   /*
-  localhost:8007/api/v1/user/user/bulk?filter=saif >> api url
+  paytm100x.vercel.app/api/v1/user/user/bulk?filter=saif >> api url
   */
   // this i need to grind more to understand how search query works in mongo db
   const filter = req.query.filter || "";
